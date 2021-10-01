@@ -28,10 +28,28 @@ body {
       }
     }
     .nickname {
-      padding-left: 0.3rem;
-      text-transform: none;
+      padding-left: 0.4rem;
+      font-size: 13px;
+      cursor: pointer;
+      &:hover {
+        color: #ddd;
+      }
+      i {
+        margin-right: 4px;
+      }
     }
   }
+}
+
+// ------------- NotFound Component -------------
+
+.not-found {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.6rem;
+  font-weight: 900;
 }
 // ------------- ToolBox Component -------------
 .tool-box {
@@ -46,6 +64,7 @@ body {
     font-size: 2rem;
     color: #333;
     font-weight: 600;
+    text-transform: uppercase;
   }
   .search-box {
     .search-input {
@@ -53,14 +72,14 @@ body {
       outline: 0;
     }
   }
-  .cart {
+  .cart-box {
     cursor: pointer;
     display: inline-block;
     color: #333;
     font-size: 1.2rem;
-  }
-  .cart-num {
-    margin-left: 4px;
+    .cart-num {
+      margin-left: 4px;
+    }
   }
 }
 
@@ -131,19 +150,20 @@ body {
   }
 }
 
-.product-box-enter {
+.product-fade-enter {
   opacity: 0.1;
-  transition: all 0.3s ease-in;
 }
-.product-box-enter.product-box-enter-active {
-  opacity: 1;
-}
-.product-box-exit {
+.product-fade-enter-active {
   opacity: 1;
   transition: all 0.3s ease-in;
 }
-.product-box-exit.product-box-exit-active {
+
+.product-fade-exit {
+  opacity: 1;
+}
+.product-fade-exit-active {
   opacity: 0.1;
+  transition: all 0.3s ease-in;
 }
 
 // -------- product component -------
@@ -263,7 +283,7 @@ body {
 }
 .out-stock {
   .out-stock-text {
-    z-index: 0 !important;
+    z-index: 1 !important;
   }
 }
 
