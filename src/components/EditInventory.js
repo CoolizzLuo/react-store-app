@@ -2,13 +2,18 @@ import React from 'react'
 import { toast } from 'react-toastify';
 import axios from 'commons/axios';
 
-class AddInventory extends React.Component {
+class EditInventory extends React.Component {
   state = {
+    id: '',
     name: '',
     price: '',
     tags: '',
     image: '',
     status: 'available'
+  }
+
+  componentDidMount() {
+    this.setState(this.props.product)
   }
 
   handleChange = (e) => {
@@ -21,21 +26,23 @@ class AddInventory extends React.Component {
   submit = (e) => {
     e.preventDefault()
     const product = { ...this.state }
-    axios.post('/products', product)
+    axios.put(`/products/${this.state.id}`, product)
       .then(res => {
         this.props.close(res.data)
-        toast.success('Add Success');
+        toast.success('Edit Success');
       })
       .catch(err => console.log(err))
   }
 
-  showToast = () => {
-    toast('default');
-    toast.info('info');
-    toast.success('success');
-    toast.warning('warning');
-    toast.error('error');
-  };
+  onDelete = () => {
+    axios.delete(`/products/${this.state.id}`)
+      .then(res => {
+        this.props.deleteProduct(this.state.id)
+        this.props.close()
+        toast.success('Delete Success');
+      })
+      .catch(err => console.log(err))
+  }
 
   render() {
     return (
@@ -107,7 +114,10 @@ class AddInventory extends React.Component {
           <br />
           <div className="field is-grouped is-grouped-centered">
             <div className="control">
-              <button className="button is-link">Submit</button>
+              <button className="button is-link">Update</button>
+            </div>
+            <div className="control">
+              <button className="button is-danger" type="button" onClick={this.onDelete}>Delete</button>
             </div>
             <div className="control">
               <button
@@ -117,13 +127,6 @@ class AddInventory extends React.Component {
               >
                 Cancel
               </button>
-              <button
-                className="button is-primary"
-                type="button"
-                onClick={() => this.showToast()}
-              >
-                Show
-              </button>
             </div>
           </div>
         </form>
@@ -132,4 +135,4 @@ class AddInventory extends React.Component {
   }
 }
 
-export default AddInventory
+export default EditInventory

@@ -1,7 +1,20 @@
 import React from 'react'
 import { formatPrice } from 'commons/helper';
+import Panel from 'components/Panel'
+import EditInventory from 'components/EditInventory';
 
 class Product extends React.Component {
+
+  toEdit = () => {
+    Panel.open({
+      component: EditInventory,
+      props: {
+        product: this.props.product,
+        deleteProduct: this.props.delete
+      },
+      callback: (data) => (data && this.props.update(data))
+    })
+  }
 
   render() {
     const { name, image, tags, price, status } = this.props.product
@@ -13,10 +26,15 @@ class Product extends React.Component {
     return (
       <div className={_pClass[status]}>
         <div className="p-content">
+          <div className="p-head has-text-right" onClick={this.toEdit}>
+            <span className="icon edit-btn">
+              <i className="fas fa-sliders-h"></i>
+            </span>
+          </div>
           <div className="img-wrapper">
             <div className="out-stock-text">Out Of Stock</div>
             <figure className="image is-4by3">
-              <img src={image} alt="{name}" />
+              <img src={image} alt={name} />
             </figure>
           </div>
           <p className="p-tags">{tags}</p>

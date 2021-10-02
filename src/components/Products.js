@@ -1,10 +1,10 @@
 import React from 'react'
-import axios from 'commons/axios';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import axios from 'commons/axios'
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import ToolBox from './ToolBox'
 import Product from './Product'
-import Panel from './Panel';
-import AddInventory from './AddInventory';
+import Panel from './Panel'
+import AddInventory from './AddInventory'
 
 class Products extends React.Component {
   state = {
@@ -39,7 +39,44 @@ class Products extends React.Component {
 
   toAdd = () => {
     Panel.open({
-      component: AddInventory
+      component: AddInventory,
+      callback: (data) => {
+        if (data) this.add(data)
+      }
+    })
+  }
+
+  add = product => {
+    const _products = [...this.state.products, product]
+    const _sProducts = [...this.state.sourceProducts, product]
+
+    this.setState({
+      products: _products,
+      sourceProducts: _sProducts
+    })
+  }
+
+  update = product => {
+    const _products = [...this.state.products]
+    const _index = _products.findIndex(p => p.id === product.id)
+    _products.splice(_index, 1, product)
+    
+    const _sProducts = [...this.state.sourceProducts]
+    const _sIndex = _products.findIndex(p => p.id === product.id)
+    _sProducts.splice(_sIndex, 1, product)
+
+    this.setState({
+      products: _products,
+      sourceProducts: _sProducts
+    })
+  }
+
+  delete = id => {
+    const _products = this.state.products.filter(p => p.id !== id)
+    const _sProducts = this.state.products.filter(p => p.id !== id)
+    this.setState({
+      products: _products,
+      sourceProducts: _sProducts
     })
   }
 
@@ -58,7 +95,7 @@ class Products extends React.Component {
                     key={product.id}
                   >
                     <div className="column is-3" key={product.id}>
-                      <Product product={product} />
+                      <Product product={product} update={this.update} delete={this.delete}/>
                     </div>
                   </CSSTransition>
                 )
