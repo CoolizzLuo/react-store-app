@@ -9,7 +9,8 @@ import AddInventory from './AddInventory'
 class Products extends React.Component {
   state = {
     products: [],
-    sourceProducts: []
+    sourceProducts: [],
+    cartNum: 0
   }
 
 
@@ -21,6 +22,8 @@ class Products extends React.Component {
           sourceProducts: res.data
         })
       })
+      .catch(err => console.log(err))
+    this.updateCartNum()
   }
 
   search = text => {
@@ -80,10 +83,23 @@ class Products extends React.Component {
     })
   }
 
+  updateCartNum = async () => {
+    const cartNum = await this.initCartNum()
+    this.setState({
+      cartNum
+    })
+  }
+
+  initCartNum = async () => {
+    const res = await axios.get('/carts')
+    const carts = res.data || []
+    return carts.reduce((acc, cart) => acc + cart.mount, 0)
+  }
+
   render() {
     return (
       <div>
-        <ToolBox search={this.search}/>
+        <ToolBox search={this.search} cartNum={this.state.cartNum}/>
         <div className="products">
           <div className="columns is-multiline is-desktop">
             <TransitionGroup component={null}>
@@ -95,7 +111,12 @@ class Products extends React.Component {
                     key={product.id}
                   >
                     <div className="column is-3" key={product.id}>
-                      <Product product={product} update={this.update} delete={this.delete}/>
+                      <Product 
+                        product={product} 
+                        update={this.update} 
+                        delete={this.delete}
+                        updateCartNum={this.updateCartNum}
+                      />
                     </div>
                   </CSSTransition>
                 )
