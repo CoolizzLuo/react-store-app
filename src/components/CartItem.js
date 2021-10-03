@@ -5,10 +5,7 @@ import { formatPrice } from 'commons/helper'
 const CartItem = ({ cart, updateCart, deleteCart }) => {
   const { id, name, image, price, mount } = cart
   const [count, setCount] = useState(mount)
-  const sumPrice = useMemo(() => {
-    const result = (count <= 0 || !count) ? 0 : count* parseInt(price)
-    return formatPrice(result)
-  }, [count, price])
+  const sumPrice = useMemo(() => (count <= 0 || !count) ? 0 : count* parseInt(price), [count, price])
 
   const handleChange = (e) => {
     const _mount = parseInt(e.target.value)
@@ -49,7 +46,7 @@ const CartItem = ({ cart, updateCart, deleteCart }) => {
         />
       </div>
       <div className="column">
-        <span className="sum-price">{sumPrice}</span>
+        <span className="sum-price">{formatPrice(sumPrice)}</span>
       </div>
     </div>
   );
