@@ -1,24 +1,54 @@
-import React from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import Layout from 'Layout'
 import CartItem from 'components/CartItem'
 import axios from 'commons/axios'
 import { formatPrice } from 'commons/helper'
+import { toast } from 'react-toastify'
 
-const Cart = () => (
-  <Layout>
-    <div className="cart-page">
-      <span className="cart-title">Shopping Cart</span>
-      <div className="cart-list">
-        <CartItem/>
-        <CartItem/>
-        <CartItem/>
+const Cart = () => {
+  const [carts, setCarts] = useState([])
+  const totalPrice = useMemo(() => {
+    return carts.reduce((acc, cart) => acc + (cart.mount * parseInt(cart.price)), 0)
+  }, [carts])
+
+
+  useEffect(() => axios.get('/carts').then((res) => setCarts(res.data)), [])
+
+  const updateCart = useCallback((cart) => {
+    const newCarts = [...carts]
+    const _index = newCarts.findIndex(c => c.id === cart.id)
+    newCarts.splice(_index, 1, cart)
+    setCarts(newCarts)
+    toast.success('Update Cart mount')
+  }, [carts])
+
+  const deleteCart = useCallback((cart) => {
+    const newCarts = carts.filter(c => c.id !== cart.id)
+    setCarts(newCarts)
+    toast.warning(`Remove Cart Item: ${cart.name}`)
+  }, [carts])
+
+  return (
+    <Layout>
+      <div className="cart-page">
+        <span className="cart-title">Shopping Cart</span>
+        <div className="cart-list">
+          { carts.map((cart) => (
+              <CartItem 
+                key={cart.id} 
+                cart={cart} 
+                updateCart={updateCart}
+                deleteCart={deleteCart}
+              />
+          ))}
+        </div>
+        <div className="cart-total">
+          Total:
+          <span className="total-price">{formatPrice(totalPrice)}</span>
+        </div>
       </div>
-      <div className="cart-total">
-        Total:
-        <span className="total-price">$2345</span>
-      </div>
-    </div>
-  </Layout>
-);
+    </Layout>
+  )
+}
 
 export default Cart;
