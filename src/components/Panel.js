@@ -44,10 +44,7 @@ class Panel extends React.Component {
         <div className="panel">
           <div className="head">
             <span className="close" onClick={() => this.close()}>x</span>
-            <p className="has-text-centered">
-              Children Component
-            </p>
-              { this.state.component }
+            { this.state.component }
           </div>
         </div>
       </div>

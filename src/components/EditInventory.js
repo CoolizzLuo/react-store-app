@@ -46,7 +46,7 @@ class EditInventory extends React.Component {
 
   render() {
     return (
-      <div className="inventory">
+      <div className="inventory has-text-left">
         <p className="title has-text-centered">Inventory</p>
         <form onSubmit={this.submit}>
           <div className="field">

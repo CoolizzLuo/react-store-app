@@ -3,33 +3,43 @@ import axios from 'commons/axios';
 import { useForm } from "react-hook-form";
 import { toast } from 'react-toastify';
 
-const Login = ({ history }) => {
+const Register = ({ history }) => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
 
   const onSubmit = async (data) => {
-    // 2. 获取表单数据
-
-    // 3. 处理登录逻辑
     try {
-      const { email, password } = data
-      const res = await axios.post('/auth/login', { email, password})
+      const { nickname, email, password } = data
+      const res = await axios.post('/auth/register', { nickname, email, password, type: 0})
       const jwToken = res.data
-      console.log(jwToken)
       global.auth.setToken(jwToken)
-      toast.success('Login Success.')
+      toast.success('Register Success.')
       history.push('/');
     } catch (error) {
-      console.log(error.response.data)
       const { message } = error.response.data
       toast.error(message)
     }
-
   };
 
   return (
     <div className="login-wrapper">
       <form className="box login-box" onSubmit={handleSubmit(onSubmit)}>
+        <div className="field">
+          <label className="label">Nickname</label>
+          <div className="control">
+            <input 
+              className={`input ${errors.nickname && 'is-danger'}`}
+              type="text" 
+              placeholder="Nickname"
+              {...register(
+                "nickname", { 
+                  required: 'nickname is required',
+                }
+              )} 
+            />
+            { errors.nickname && <p className="helper has-text-danger">{ errors.nickname.message }</p> }
+          </div>
+        </div>
         <div className="field">
           <label className="label">Email</label>
           <div className="control">
@@ -69,11 +79,11 @@ const Login = ({ history }) => {
           </div>
         </div>
         <div className="control">
-          <button className="button is-fullwidth is-primary">Login</button>
+          <button className="button is-fullwidth is-primary">Submit</button>
         </div>
       </form>
     </div>
   )
 }
 
-export default Login
+export default Register
