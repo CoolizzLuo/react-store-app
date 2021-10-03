@@ -1,4 +1,5 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 import axios from 'commons/axios'
 import { formatPrice } from 'commons/helper'
 import { toast } from 'react-toastify'
@@ -19,7 +20,13 @@ class Product extends React.Component {
   }
 
   addCart = async () => {
+    if (!global.auth.isLogin()) {
+      this.props.history.push('/login')
+      toast.info('Please Login First')
+      return
+    }
     try {
+      const user = global.auth.getUser() || {}
       const { id, name, image, price } = this.props.product
       const res = await axios.get(`/carts?productId=${id}`)
       const carts = res.data
@@ -33,7 +40,8 @@ class Product extends React.Component {
           name,
           image,
           price,
-          mount: 1
+          mount: 1,
+          userId: user.email
         }
         await axios.post('/carts', cart)
       }
@@ -43,6 +51,19 @@ class Product extends React.Component {
       toast.error('Add Cart Failed')
     }
     
+  }
+
+  renderMangerBtn = () => {
+    const user = global.auth.getUser() || {}
+    if (user.type === 1) {
+      return (
+        <div className="p-head has-text-right" onClick={this.toEdit}>
+          <span className="icon edit-btn">
+            <i className="fas fa-sliders-h"></i>
+          </span>
+        </div>
+      )
+    }
   }
 
   render() {
@@ -55,11 +76,7 @@ class Product extends React.Component {
     return (
       <div className={_pClass[status]}>
         <div className="p-content">
-          <div className="p-head has-text-right" onClick={this.toEdit}>
-            <span className="icon edit-btn">
-              <i className="fas fa-sliders-h"></i>
-            </span>
-          </div>
+          { this.renderMangerBtn() }
           <div className="img-wrapper">
             <div className="out-stock-text">Out Of Stock</div>
             <figure className="image is-4by3">
@@ -71,7 +88,11 @@ class Product extends React.Component {
         </div>
         <div className="p-footer">
           <p className="price">{formatPrice(price)}</p>
-          <button className="add-cart" disabled={status === 'unavailable'} onClick={this.addCart}>
+          <button 
+            className="add-cart" 
+            disabled={status === 'unavailable'} 
+            onClick={this.addCart}
+          >
             <i className="fas fa-shopping-cart"></i>
             <i className="fas fa-exclamation"></i>
           </button>
@@ -81,4 +102,4 @@ class Product extends React.Component {
   }
 }
 
-export default Product
+export default withRouter(Product)

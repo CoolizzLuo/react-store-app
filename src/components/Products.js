@@ -91,7 +91,12 @@ class Products extends React.Component {
   }
 
   initCartNum = async () => {
-    const res = await axios.get('/carts')
+    const user = global.auth.getUser() || {}
+    const res = await axios.get('/carts', {
+      params: {
+        userId: user.email
+      }
+    })
     const carts = res.data || []
     return carts.reduce((acc, cart) => acc + cart.mount, 0)
   }
@@ -123,7 +128,11 @@ class Products extends React.Component {
               })}
             </TransitionGroup>
           </div>
-          <button className="button is-primary add-btn" onClick={this.toAdd}>add</button>
+          {
+            (global.auth.getUser() || {}).type === 1 && (
+              <button className="button is-primary add-btn" onClick={this.toAdd}>add</button>
+            )
+          }
         </div>
       </div>
     )

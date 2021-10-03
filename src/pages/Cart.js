@@ -11,7 +11,10 @@ const Cart = () => {
   const [carts, setCarts] = useState([])
   const totalPrice = useMemo(() => carts.reduce((acc, cart) => acc + (cart.mount * parseInt(cart.price)), 0), [carts])
 
-  useEffect(() => axios.get('/carts').then((res) => setCarts(res.data)), [])
+  useEffect(() => {
+    const user = global.auth.getUser() || {}
+    axios.get(`/carts?userId=${user.email}`).then((res) => setCarts(res.data))
+  }, [])
 
   const updateCart = useCallback((cart) => {
     const newCarts = [...carts]

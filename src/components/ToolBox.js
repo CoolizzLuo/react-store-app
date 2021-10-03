@@ -1,6 +1,6 @@
 import React from 'react'
-import { withRouter } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { withRouter } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 class ToolBox extends React.Component {
   state = {
